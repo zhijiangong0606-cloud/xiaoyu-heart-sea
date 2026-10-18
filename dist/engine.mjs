@@ -7,6 +7,8 @@ export const LEVELS = Object.freeze([
   Object.freeze({ id: 1, name: '浅浅心动', subtitle: '沿着星光，慢慢靠近', target: 8, duration: 50, hazards: 3, note: '今天的第一颗星光，想先送给你。' }),
   Object.freeze({ id: 2, name: '珊瑚来信', subtitle: '躲过小水母，把心意攒起来', target: 12, duration: 55, hazards: 5, note: '和小鱼一起的普通日子，也会悄悄发光。' }),
   Object.freeze({ id: 3, name: '星光都给你', subtitle: '这片海里，最想遇见的是你', target: 16, duration: 60, hazards: 7, note: '小宝宝，天天开心呀！永远是最棒的小鱼。' }),
+  Object.freeze({ id: 4, name: '梦幻泡泡岛', subtitle: 'GZJ带你去看粉色的梦', target: 18, duration: 70, hazards: 9, note: 'GZJ说：小鱼的笑容，是海里最美的风景。' }),
+  Object.freeze({ id: 5, name: 'GZJ的秘密花园', subtitle: '藏着最多星光的地方', target: 22, duration: 80, hazards: 11, note: '这个花园，是GZJ为最棒的小鱼准备的礼物！🐕💕' }),
 ]);
 
 const PATH = [
@@ -14,6 +16,10 @@ const PATH = [
   [820, 290], [865, 420], [735, 490], [590, 460],
   [455, 490], [325, 430], [185, 470], [100, 350],
   [120, 210], [260, 150], [405, 130], [805, 145],
+  // 新增位置用于第4和第5关
+  [650, 350], [500, 300], [380, 250], [720, 420],
+  [560, 520], [210, 280], [450, 380], [620, 180],
+  [750, 260], [340, 480],
 ];
 const TAU = Math.PI * 2;
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
@@ -37,6 +43,7 @@ export class SeaGame {
     this.stars = [];
     this.hazards = [];
     this.pickups = [];
+    this.items = []; // 新增：道具列表
     this.particles = [];
     this.events = [];
     this.timeLeft = this.level.duration;
@@ -48,11 +55,16 @@ export class SeaGame {
     this.bestCombo = 0;
     this.dashCooldown = 0;
     this.shieldTime = 0;
+    this.speedBoost = 1; // 新增：速度加成
+    this.scoreMultiplier = 1; // 新增：得分倍数
     this._comboTime = 0;
     this._id = 0;
     this._facing = { x: 1, y: 0 };
     this._nextHazardAt = 16;
     this._nextPickupAt = 12;
+    this._nextItemAt = 20; // 新增：下一个道具生成时间
+    this._noDamage = true; // 新增：无伤记录
+    this._startTime = 0; // 新增：开始时间
   }
 
   start(levelIndex = 0, endless = false) {
@@ -70,15 +82,21 @@ export class SeaGame {
     this.bestCombo = 0;
     this.dashCooldown = 0;
     this.shieldTime = 0;
+    this.speedBoost = 1;
+    this.scoreMultiplier = 1;
     this._comboTime = 0;
     this._id = 0;
     this._facing = { x: 1, y: 0 };
     this._nextHazardAt = 16;
     this._nextPickupAt = 12;
+    this._nextItemAt = 20;
+    this._noDamage = true;
+    this._startTime = 0;
     this.events = [];
     this.particles = [];
     this.hazards = [];
     this.pickups = [];
+    this.items = [];
     this.stars = PATH.slice(0, this.endless ? 8 : this.level.target).map(([x, y], routeIndex) => ({
       id: ++this._id, x, y, radius: 13, phase: this._random() * TAU, routeIndex,
     }));
@@ -129,7 +147,7 @@ export class SeaGame {
     this._comboTime = Math.max(0, this._comboTime - dt);
     if (this._comboTime <= 0) this.combo = 0;
 
-    const speed = dashing ? 530 : 225;
+    const speed = (dashing ? 530 : 225) * this.speedBoost;
     let dx = Number.isFinite(input.x) ? input.x : 0;
     let dy = Number.isFinite(input.y) ? input.y : 0;
     if (input.target && Number.isFinite(input.target.x) && Number.isFinite(input.target.y)) {
@@ -178,7 +196,7 @@ export class SeaGame {
         this.combo++;
         this.bestCombo = Math.max(this.bestCombo, this.combo);
         this._comboTime = 3;
-        const points = 100 + Math.min(180, (this.combo - 1) * 20);
+        const points = Math.floor((100 + Math.min(180, (this.combo - 1) * 20)) * this.scoreMultiplier);
         this.score += points;
         this._emit('collect', { id: star.id, x: star.x, y: star.y, points, combo: this.combo, collected: this.collected });
         if (this.endless) this._addStar();
@@ -198,6 +216,43 @@ export class SeaGame {
       this._emit('shield', { action: 'pickup', x: pickup.x, y: pickup.y });
     }
 
+    // 道具收集
+    for (let i = this.items.length - 1; i >= 0; i--) {
+      const item = this.items[i];
+      if (!overlaps(this.player, item)) continue;
+      this.items.splice(i, 1);
+
+      // 应用道具效果
+      switch(item.type) {
+        case 'candy':
+          this.speedBoost = 1.5;
+          setTimeout(() => this.speedBoost = 1, 10000);
+          break;
+        case 'heart':
+          if (this.lives < 3) {
+            this.lives++;
+            this._emit('heal', { x: item.x, y: item.y, lives: this.lives });
+          }
+          break;
+        case 'clover':
+          this.scoreMultiplier = 2;
+          setTimeout(() => this.scoreMultiplier = 1, 30000);
+          break;
+        case 'clock':
+          if (!this.endless) {
+            this.timeLeft = Math.min(this.level.duration, this.timeLeft + 10);
+          }
+          break;
+        case 'chest':
+          // 随机道具
+          const itemTypes = ['candy', 'heart', 'clover', 'clock'];
+          const randomType = itemTypes[Math.floor(this._random() * itemTypes.length)];
+          this._addItem(randomType);
+          break;
+      }
+      this._emit('item', { type: item.type, x: item.x, y: item.y });
+    }
+
     if (!dashing && this.player.invincible <= 0) {
       const hazard = this.hazards.find(item => overlaps(this.player, item));
       if (hazard) {
@@ -210,6 +265,7 @@ export class SeaGame {
           this.player.invincible = 1.8;
           this.combo = 0;
           this._comboTime = 0;
+          this._noDamage = false; // 记录受伤
           this._emit('hit', { x: this.player.x, y: this.player.y, lives: this.lives });
           if (this.lives === 0) { this._finish(false, 'lives'); return this; }
         }
@@ -219,6 +275,13 @@ export class SeaGame {
     if (this.pickups.length === 0 && this.elapsed >= this._nextPickupAt) {
       this._addPickup();
       this._nextPickupAt = this.elapsed + 14;
+    }
+    // 生成道具
+    if (this.items.length === 0 && this.elapsed >= this._nextItemAt) {
+      const itemTypes = ['candy', 'heart', 'clover', 'clock', 'chest'];
+      const randomType = itemTypes[Math.floor(this._random() * itemTypes.length)];
+      this._addItem(randomType);
+      this._nextItemAt = this.elapsed + 25 + this._random() * 10;
     }
     if (this.endless && this.elapsed >= this._nextHazardAt && this.hazards.length < 14) {
       this._addHazard();
@@ -251,7 +314,15 @@ export class SeaGame {
     this.player.vx = 0;
     this.player.vy = 0;
     if (won) this.score += Math.ceil(this.timeLeft) * 10 + this.lives * 100;
-    this._emit(won ? 'win' : 'lose', { reason, collected: this.collected, lives: this.lives });
+    const fastClear = won && this.elapsed <= 30;
+    this._emit(won ? 'win' : 'lose', {
+      reason,
+      collected: this.collected,
+      lives: this.lives,
+      noDamage: this._noDamage,
+      fastClear,
+      combo: this.bestCombo,
+    });
   }
 
   _findPosition(radius, playerGap = 85, avoidStars = true, routeGap = 0) {
@@ -301,6 +372,19 @@ export class SeaGame {
     const position = this._findPosition(15, 65);
     if (!position) return false;
     this.pickups.push({ id: ++this._id, ...position, radius: 15, phase: this._random() * TAU, type: 'shield' });
+    return true;
+  }
+
+  _addItem(type = 'candy') {
+    const position = this._findPosition(16, 70);
+    if (!position) return false;
+    this.items.push({
+      id: ++this._id,
+      ...position,
+      radius: 16,
+      phase: this._random() * TAU,
+      type
+    });
     return true;
   }
 }

@@ -2,9 +2,20 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#f7f6ef">
-  <meta name="description" content="小宝宝，天天开心呀！一场写给小鱼的海底小冒险，收集星光，也收藏一点点开心。">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#FFB3D9">
+  <meta name="description" content="小宝宝,天天开心呀!一场写给小鱼的海底小冒险,收集星光,也收藏一点点开心。">
+
+  <!-- PWA 配置 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="心动海域">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="./manifest.json">
+
+  <!-- 图标 -->
+  <link rel="apple-touch-icon" href="./icon-192.png">
+
   <title>小鱼的心动海域 · 一起游向开心</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css">
@@ -56,11 +67,13 @@
       </section>
 
       <section class="route-section" aria-labelledby="route-title">
-        <div class="section-heading"><div><span class="section-number">01 — 03</span><h2 id="route-title">今天，想游到哪里？</h2></div><p>每一段小冒险，都藏着一句想对你说的话。</p><span class="doodle-arrow">⤵</span></div>
+        <div class="section-heading"><div><span class="section-number">01 — 05</span><h2 id="route-title">今天，想游到哪里？</h2></div><p>每一段小冒险，都藏着一句想对你说的话。</p><span class="doodle-arrow">⤵</span></div>
         <div id="route-cards" class="route-cards">
           <button class="route-card mint" data-level="0"><div class="route-icon"><svg><use href="#shell-icon"/></svg></div><div class="route-info"><span class="route-num">第一站 · EASY DOES IT</span><h3>浅浅心动</h3><p>8 颗星光，和一点点小幸运</p></div><span class="route-status">出发 <span>↗</span></span></button>
           <button class="route-card pink" data-level="1" aria-disabled="true"><div class="route-icon">✿</div><div class="route-info"><span class="route-num">第二站 · A LITTLE CLOSER</span><h3>珊瑚来信</h3><p>再靠近一点，听见海的秘密</p></div><span class="route-status locked">待解锁 ♡</span></button>
           <button class="route-card sand" data-level="2" aria-disabled="true"><div class="route-icon">✦</div><div class="route-info"><span class="route-num">第三站 · YOU ARE MY STAR</span><h3>星光都给你</h3><p>最亮的那一颗，留给最棒的你</p></div><span class="route-status locked">待解锁 ♡</span></button>
+          <button class="route-card pink" data-level="3" aria-disabled="true"><div class="route-icon">🫧</div><div class="route-info"><span class="route-num">第四站 · DREAMY BUBBLES</span><h3>梦幻泡泡岛</h3><p>GZJ带你去看粉色的梦</p></div><span class="route-status locked">待解锁 ♡</span></button>
+          <button class="route-card mint" data-level="4" aria-disabled="true"><div class="route-icon">🌸</div><div class="route-info"><span class="route-num">第五站 · SECRET GARDEN</span><h3>GZJ的秘密花园</h3><p>藏着最多星光的地方</p></div><span class="route-status locked">待解锁 ♡</span></button>
         </div>
         <div class="endless-row"><span>想在海里多待一会儿？</span><button id="endless-btn">去自由漫游 <span>↗</span></button><span id="best-label">个人最佳 · 等你创造</span></div>
       </section>
@@ -72,6 +85,83 @@
   <dialog id="notes-dialog"><div class="dialog-heading"><span class="eyebrow">小鱼的海边邮局</span><button class="close-dialog" aria-label="关闭">×</button></div><h2>把小小的开心，收藏起来。</h2><p class="dialog-subtitle">每完成一段航线，就会有一封信漂到这里。</p><div id="notes-list" class="notes-list"></div><p class="letter-sign">小宝宝，天天开心呀！<br><span>永远是最棒的小鱼 ♡</span></p></dialog>
   <dialog id="credits-dialog"><div class="dialog-heading"><span class="eyebrow">ABOUT THIS LITTLE OCEAN</span><button class="close-dialog" aria-label="关闭">×</button></div><h2>一片专门为小鱼造的海</h2><p>画面、关卡与文案为这次小冒险原创制作。玩法设计参考了这些 GitHub 项目的海洋收集、触控操作与渐进挑战思路，没有复制项目代码或素材。</p><ul class="credits-list"><li><a href="https://github.com/cbrown5/seabird-block-game" target="_blank" rel="noreferrer">Marine Ecology Games ↗</a><span>海洋生存、收集与躲避</span></li><li><a href="https://github.com/tahmidrafi/great-catch" target="_blank" rel="noreferrer">Great Catch ↗</a><span>海洋层次与即时反馈</span></li><li><a href="https://github.com/danielalanbates/flappy-axolotl" target="_blank" rel="noreferrer">Flappy Axolotl ↗</a><span>爱心、护盾与宽容的挑战</span></li></ul><p class="dialog-subtitle">没有账号、没有广告。游戏进度只保存在你自己的浏览器里。</p></dialog>
   <div id="page-toast" class="page-toast" role="status"></div>
-  <script type="module" src="./app.mjs"></script>
+  <script type="module" src="./app.mjs?v=20261019"></script>
+
+  <!-- PWA Service Worker 注册 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(registration => {
+            console.log('✨ PWA已就绪，可以添加到主屏幕');
+
+            // 检查更新
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // 有新版本可用
+                  if (confirm('发现新版本！刷新查看新内容？')) {
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    window.location.reload();
+                  }
+                }
+              });
+            });
+          })
+          .catch(error => {
+            console.log('Service Worker注册失败:', error);
+          });
+      });
+
+      // 监听SW激活
+      let refreshing;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+    }
+
+    // iOS Safari添加到主屏幕提示
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+
+      // 显示安装提示（可选）
+      const installHint = document.createElement('div');
+      installHint.className = 'install-hint';
+      installHint.innerHTML = `
+        <span>💕</span>
+        <p>把游戏添加到主屏幕，随时和GZJ一起玩！</p>
+        <button id="install-btn">添加到主屏幕</button>
+        <button id="dismiss-install">稍后</button>
+      `;
+      installHint.style.cssText = `
+        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+        background: linear-gradient(135deg, #FFB3D9, #FFC9E5);
+        padding: 15px 20px; border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(255,105,180,0.3);
+        display: flex; align-items: center; gap: 12px;
+        max-width: 90%; z-index: 10000;
+        animation: slideUp 0.3s ease-out;
+      `;
+
+      document.body.appendChild(installHint);
+
+      document.getElementById('install-btn')?.addEventListener('click', async () => {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installHint.remove();
+      });
+
+      document.getElementById('dismiss-install')?.addEventListener('click', () => {
+        installHint.remove();
+      });
+    });
+  </script>
 </body>
+
 </html>
