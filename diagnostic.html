@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>游戏诊断 - 小鱼的心动海域</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #ffeef8 0%, #ffe5f1 100%);
+    }
+    h1 {
+      color: #ff69b4;
+      text-align: center;
+    }
+    .check {
+      background: white;
+      padding: 20px;
+      margin: 15px 0;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .success {
+      color: #10b981;
+      font-weight: bold;
+    }
+    .error {
+      color: #ef4444;
+      font-weight: bold;
+    }
+    .code {
+      background: #f3f4f6;
+      padding: 10px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      margin: 10px 0;
+    }
+    button {
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+    button:hover {
+      background: #ff1493;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 游戏诊断工具</h1>
+
+  <div class="check">
+    <h2>1. 检查 engine.mjs 是否加载</h2>
+    <div id="engineCheck">检查中...</div>
+  </div>
+
+  <div class="check">
+    <h2>2. 检查 PATH 数组长度</h2>
+    <div id="pathCheck">检查中...</div>
+  </div>
+
+  <div class="check">
+    <h2>3. 检查第4关配置</h2>
+    <div id="level4Check">检查中...</div>
+  </div>
+
+  <div class="check">
+    <h2>4. 浏览器缓存信息</h2>
+    <div id="cacheInfo">检查中...</div>
+  </div>
+
+  <div class="check" style="text-align: center;">
+    <button onclick="location.reload(true)">强制刷新此页面</button>
+    <button onclick="clearAndReload()">清除缓存并刷新</button>
+    <button onclick="window.location.href='./index.html?v=' + Date.now()">启动游戏</button>
+  </div>
+
+  <script type="module">
+    import {SeaGame, LEVELS} from './engine.mjs?v=20261019';
+
+    // 检查 engine.mjs
+    document.getElementById('engineCheck').innerHTML =
+      '<span class="success">✅ engine.mjs 已成功加载</span>';
+
+    // 导入 PATH 并检查长度
+    import('./engine.mjs?v=20261019').then(module => {
+      // 通过创建游戏实例来访问内部的 PATH
+      const game = new SeaGame(0, false);
+      const pathLength = game.stars.length; // 初始星星数量
+
+      document.getElementById('pathCheck').innerHTML = `
+        <div class="success">✅ PATH 数组可用</div>
+        <div class="code">当前关卡初始星星数: ${pathLength}</div>
+        <div style="margin-top: 10px; color: #666;">
+          注意: 游戏会根据关卡目标从PATH中选取星星
+        </div>
+      `;
+    });
+
+    // 检查第4关
+    const level4 = LEVELS[3]; // 索引3 = 第4关
+    const isCorrect = level4.target === 18;
+
+    document.getElementById('level4Check').innerHTML = `
+      <div class="${isCorrect ? 'success' : 'error'}">
+        ${isCorrect ? '✅' : '❌'} 第4关配置
+      </div>
+      <div class="code">
+        ID: ${level4.id}<br>
+        名称: ${level4.name}<br>
+        目标星星数: <strong>${level4.target}</strong><br>
+        时间限制: ${level4.time}秒<br>
+        水母数量: ${level4.jellies}
+      </div>
+      ${isCorrect ?
+        '<div style="color: #10b981; margin-top: 10px;">配置正确！应该生成18颗星星</div>' :
+        '<div style="color: #ef4444; margin-top: 10px;">配置错误！需要修复</div>'
+      }
+    `;
+
+    // 浏览器缓存信息
+    const loadTime = new Date().toLocaleTimeString();
+    const userAgent = navigator.userAgent;
+    document.getElementById('cacheInfo').innerHTML = `
+      <div class="code">
+        加载时间: ${loadTime}<br>
+        浏览器: ${userAgent.includes('Chrome') ? 'Chrome' : userAgent.includes('Firefox') ? 'Firefox' : userAgent.includes('Safari') ? 'Safari' : '其他'}<br>
+        <br>
+        <strong>如果看到此页面但游戏仍显示16颗星:</strong><br>
+        1. 按 <kbd>Ctrl+Shift+Delete</kbd> 打开清除缓存对话框<br>
+        2. 选择"缓存的图片和文件"<br>
+        3. 点击清除<br>
+        4. 或直接使用下方"清除缓存并刷新"按钮
+      </div>
+    `;
+  </script>
+
+  <script>
+    function clearAndReload() {
+      // 尝试清除缓存
+      if ('caches' in window) {
+        caches.keys().then(names => {
+          names.forEach(name => caches.delete(name));
+        });
+      }
+
+      // 使用时间戳强制重新加载
+      window.location.href = window.location.href.split('?')[0] + '?v=' + Date.now();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>模块加载测试</title>
+</head>
+<body>
+    <h1>模块加载测试</h1>
+    <div id="status">正在加载...</div>
+    <script type="module">
+        try {
+            console.log('开始加载模块...');
+
+            // 测试audioManager
+            const { audioManager } = await import('./audioManager.mjs');
+            document.getElementById('status').innerHTML += '<br>✓ audioManager 加载成功';
+
+            // 测试renderer
+            const { SeaRenderer } = await import('./renderer.mjs');
+            document.getElementById('status').innerHTML += '<br>✓ renderer 加载成功';
+
+            // 测试engine
+            const { SeaGame, LEVELS } = await import('./engine.mjs');
+            document.getElementById('status').innerHTML += '<br>✓ engine 加载成功';
+            document.getElementById('status').innerHTML += '<br>✓ 关卡数量: ' + LEVELS.length;
+
+            // 测试app
+            const app = await import('./app.mjs');
+            document.getElementById('status').innerHTML += '<br>✓ app 加载成功';
+
+            document.getElementById('status').innerHTML += '<br><br>🎉 所有模块加载正常！';
+        } catch (err) {
+            document.getElementById('status').innerHTML += '<br>❌ 错误: ' + err.message;
+            console.error(err);
+        }
+    </script>
+</body>
+</html>

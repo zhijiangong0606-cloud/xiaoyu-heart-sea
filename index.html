@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#FFB3D9">
+  <meta name="description" content="小宝宝,天天开心呀!一场写给小鱼的海底小冒险,收集星光,也收藏一点点开心。">
+
+  <!-- PWA 配置 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="心动海域">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="./manifest.json">
+
+  <!-- 图标 -->
+  <link rel="apple-touch-icon" href="./icon-192.png">
+
+  <title>小鱼的心动海域 · 一起游向开心</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="fish-icon" viewBox="0 0 48 40"><path d="M33 13 45 6v28l-12-7c-9 12-29 7-29-7S24 1 33 13Z" fill="currentColor"/><circle cx="16" cy="17" r="2" fill="#fff"/><path d="M14 25q4 4 8 0" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="star-icon" viewBox="0 0 24 24"><path d="m12 2 3 6.5 7 1-5 5 1 7-6-3.3L6 21l1-6.5-5-5 7-1Z" fill="currentColor"/></symbol>
+    <symbol id="shell-icon" viewBox="0 0 32 32"><path d="M5 24C-5 8 7 0 12 7c0-8 9-8 10 0 7-6 18 5 5 17l-3 3H9Z" fill="currentColor"/><path d="m15 24-3-14m6 14 4-13M11 23 6 14m16 9 5-7" stroke="white" stroke-width="1.5" opacity=".7"/></symbol>
+    <symbol id="arrow-icon" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs></svg>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="小鱼的心动海域首页"><span class="brand-icon"><svg><use href="#fish-icon"/></svg></span><span>小鱼的心动海域<span class="brand-en">A LITTLE OCEAN, JUST FOR YOU</span></span></a>
+      <div class="header-center"><span class="live-dot"></span> 今日海况：适合开心</div>
+      <div class="header-actions"><button id="sound-btn" class="icon-button sound-off" aria-label="开启声音" title="开启声音"><svg viewBox="0 0 24 24"><path d="m11 5-5 4H3v6h3l5 4V5Zm4 3q5 4 0 8m3-11q8 7 0 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="sound-slash" d="m3 3 18 18" stroke="currentColor" stroke-width="1.8"/></svg></button><button id="open-notes" class="notes-button"><span>♡</span> 小鱼的收藏 <span id="collection-count">0/3</span></button></div>
+    </header>
+
+    <main>
+      <section class="adventure" aria-label="小鱼海底冒险">
+        <div class="intro">
+          <div class="eyebrow"><span>给小鱼的特别企划</span><i>✳</i></div>
+          <h1>把开心，<br>游进<span class="title-mark">每一天<svg viewBox="0 0 280 18" preserveAspectRatio="none"><path d="M3 11Q98-1 277 8M24 17Q155 4 249 13"/></svg></span>。</h1>
+          <p class="intro-copy">嗨，小宝宝。<br>这里有一小片海，和一些想送你的星光。<br>慢慢游，开心比通关更重要。</p>
+          <button id="start-btn" class="primary-button"><svg><use href="#fish-icon"/></svg><span>出发，去捡一点开心</span><svg class="arrow"><use href="#arrow-icon"/></svg></button>
+          <button id="how-btn" class="text-button"><span class="play-tiny">▷</span> 第一次来？看看怎么玩 <span>↗</span></button>
+          <div class="personal-note"><span class="note-doodle">♡</span><div>给全世界最棒的小鱼<small>天天开心呀，剩下的慢慢来。</small></div><span class="note-star">✧</span></div>
+        </div>
+
+        <div class="game-column">
+          <div class="sea-topline"><span><i class="tiny-wave">≈</i> 小鱼的专属海域</span><span id="scene-label">晴朗 · 微风 · 有点心动 <span>↗</span></span></div>
+          <div id="game-stage" class="game-stage" tabindex="0" aria-label="海底游戏区域。方向键或WASD游动，空格冲刺，P暂停。手机拖动游动。">
+            <canvas id="sea" aria-label="小鱼的海底冒险画面"></canvas>
+            <div class="stage-label"><span class="live-dot"></span> ONLY FOR 小鱼 <span class="stage-label-heart">♡</span></div>
+            <div id="hud" class="hud" hidden>
+              <div class="hud-level"><span id="hud-level">01 浅浅心动</span><small id="hud-goal">收集 8 颗星光</small></div>
+              <div class="hud-stats"><div class="hud-stat"><span class="star-char">✦</span> <b id="hud-stars">0/8</b></div><div class="hud-stat timer"><span>◷</span> <b id="hud-time">50</b><small>s</small></div><button id="pause-btn" class="pause-btn" aria-label="暂停游戏">Ⅱ</button></div>
+              <div class="life-row"><span id="hud-lives" aria-label="3颗爱心">♥ ♥ ♥</span><span id="hud-combo"></span></div>
+            </div>
+            <div id="welcome" class="welcome"><div class="welcome-star">✧</div><span class="welcome-kicker">一场没有标准答案的小冒险</span><h2>小鱼，海里见。</h2><p>收集星光，躲开水母<br>还有一些悄悄话，等你发现。</p><button id="canvas-start" class="sea-start">开始冒险 <span>→</span></button><span class="welcome-bottom">3 段航线 · 3 封小信 · 无限次开心</span></div>
+            <div id="game-toast" class="game-toast" aria-live="polite"></div>
+            <div id="stage-controls" class="stage-controls" hidden><div class="score-pill">本局星光 <b id="hud-score">0</b><span id="shield-label"></span></div><button id="dash-btn" class="dash-button"><span>ϟ</span> 冲刺 <small id="dash-status">SPACE</small></button></div>
+            <div id="pause-panel" class="game-overlay" hidden><div class="overlay-card"><span class="overlay-art">☁</span><p class="eyebrow">在海里歇一会儿</p><h2>开心不用赶进度</h2><p>小鱼准备好了，我们再出发。</p><button id="resume-btn" class="primary-button">继续游呀 <span>→</span></button><button id="restart-btn" class="text-button">重新开始这一段</button></div></div>
+            <div id="result-panel" class="game-overlay" hidden><div class="overlay-card result-card"><span id="result-art" class="overlay-art">✦</span><p id="result-kicker" class="eyebrow">收获一小片星光</p><h2 id="result-title">小鱼是最牛的，<br>我不解释！</h2><p id="result-message"></p><div id="result-stats" class="result-stats"></div><div id="unlocked-note" class="unlocked-note" hidden><span>致 小鱼 ♡</span><p id="unlocked-text"></p></div><button id="next-btn" class="primary-button">下一片海 <span>→</span></button><button id="retry-btn" class="text-button">再游一次，刷新纪录 ↻</button><button id="result-home" class="text-button">返回海边</button></div></div>
+            <div class="sea-coordinate">25°13′ N &nbsp; 只对你开放的浪漫</div>
+          </div>
+          <div class="control-guide"><span><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> / WASD 游动</span><span><kbd>空格</kbd> 冲刺</span><span class="touch-tip">手机拖动小鱼也可以玩</span><button id="help-btn" aria-label="查看游戏帮助">?</button></div>
+        </div>
+      </section>
+
+      <section class="route-section" aria-labelledby="route-title">
+        <div class="section-heading"><div><span class="section-number">01 — 05</span><h2 id="route-title">今天，想游到哪里？</h2></div><p>每一段小冒险，都藏着一句想对你说的话。</p><span class="doodle-arrow">⤵</span></div>
+        <div id="route-cards" class="route-cards">
+          <button class="route-card mint" data-level="0"><div class="route-icon"><svg><use href="#shell-icon"/></svg></div><div class="route-info"><span class="route-num">第一站 · EASY DOES IT</span><h3>浅浅心动</h3><p>8 颗星光，和一点点小幸运</p></div><span class="route-status">出发 <span>↗</span></span></button>
+          <button class="route-card pink" data-level="1" aria-disabled="true"><div class="route-icon">✿</div><div class="route-info"><span class="route-num">第二站 · A LITTLE CLOSER</span><h3>珊瑚来信</h3><p>再靠近一点，听见海的秘密</p></div><span class="route-status locked">待解锁 ♡</span></button>
+          <button class="route-card sand" data-level="2" aria-disabled="true"><div class="route-icon">✦</div><div class="route-info"><span class="route-num">第三站 · YOU ARE MY STAR</span><h3>星光都给你</h3><p>最亮的那一颗，留给最棒的你</p></div><span class="route-status locked">待解锁 ♡</span></button>
+          <button class="route-card pink" data-level="3" aria-disabled="true"><div class="route-icon">🫧</div><div class="route-info"><span class="route-num">第四站 · DREAMY BUBBLES</span><h3>梦幻泡泡岛</h3><p>GZJ带你去看粉色的梦</p></div><span class="route-status locked">待解锁 ♡</span></button>
+          <button class="route-card mint" data-level="4" aria-disabled="true"><div class="route-icon">🌸</div><div class="route-info"><span class="route-num">第五站 · SECRET GARDEN</span><h3>GZJ的秘密花园</h3><p>藏着最多星光的地方</p></div><span class="route-status locked">待解锁 ♡</span></button>
+        </div>
+        <div class="endless-row"><span>想在海里多待一会儿？</span><button id="endless-btn">去自由漫游 <span>↗</span></button><span id="best-label">个人最佳 · 等你创造</span></div>
+      </section>
+    </main>
+    <footer><span><svg><use href="#fish-icon"/></svg> 这片海的存在，是为了让小鱼开心。</span><span>MADE WITH A LITTLE ♡ &nbsp; <button id="credits-btn">灵感小记</button></span></footer>
+  </div>
+
+  <dialog id="help-dialog"><div class="dialog-heading"><span class="eyebrow">一份轻轻的冒险指南</span><button class="close-dialog" aria-label="关闭">×</button></div><h2>三分钟，捡一点开心</h2><div class="help-steps"><div><span class="help-symbol fish-help">➜</span><h3>跟着星光游</h3><p>电脑用方向键 / WASD；手机在海面按住拖动。收集目标数量的星光，就能收到小纸条。</p></div><div><span class="help-symbol star-help">✦</span><h3>小鱼也有超能力</h3><p>空格或点「冲刺」可快速游动，冲刺时无敌，冷却 3.2 秒。蓝色泡泡能抵挡一次碰撞。</p></div><div><span class="help-symbol jelly-help">☂</span><h3>躲开软乎乎的水母</h3><p>碰到水母会少一颗心；连续收星能提高分数。时间或爱心用完也没关系，随时能重来。</p></div></div><p class="help-foot">按 P 或 Esc 暂停 · 切换到别的页面会自动暂停 · 纪录保存在当前浏览器</p><button class="primary-button close-action">知道啦，去海里看看 →</button></dialog>
+  <dialog id="notes-dialog"><div class="dialog-heading"><span class="eyebrow">小鱼的海边邮局</span><button class="close-dialog" aria-label="关闭">×</button></div><h2>把小小的开心，收藏起来。</h2><p class="dialog-subtitle">每完成一段航线，就会有一封信漂到这里。</p><div id="notes-list" class="notes-list"></div><p class="letter-sign">小宝宝，天天开心呀！<br><span>永远是最棒的小鱼 ♡</span></p></dialog>
+  <dialog id="credits-dialog"><div class="dialog-heading"><span class="eyebrow">ABOUT THIS LITTLE OCEAN</span><button class="close-dialog" aria-label="关闭">×</button></div><h2>一片专门为小鱼造的海</h2><p>画面、关卡与文案为这次小冒险原创制作。玩法设计参考了这些 GitHub 项目的海洋收集、触控操作与渐进挑战思路，没有复制项目代码或素材。</p><ul class="credits-list"><li><a href="https://github.com/cbrown5/seabird-block-game" target="_blank" rel="noreferrer">Marine Ecology Games ↗</a><span>海洋生存、收集与躲避</span></li><li><a href="https://github.com/tahmidrafi/great-catch" target="_blank" rel="noreferrer">Great Catch ↗</a><span>海洋层次与即时反馈</span></li><li><a href="https://github.com/danielalanbates/flappy-axolotl" target="_blank" rel="noreferrer">Flappy Axolotl ↗</a><span>爱心、护盾与宽容的挑战</span></li></ul><p class="dialog-subtitle">没有账号、没有广告。游戏进度只保存在你自己的浏览器里。</p></dialog>
+  <div id="page-toast" class="page-toast" role="status"></div>
+  <script type="module" src="./app.mjs?v=20261019"></script>
+
+  <!-- PWA Service Worker 注册 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(registration => {
+            console.log('✨ PWA已就绪，可以添加到主屏幕');
+
+            // 检查更新
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // 有新版本可用
+                  if (confirm('发现新版本！刷新查看新内容？')) {
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    window.location.reload();
+                  }
+                }
+              });
+            });
+          })
+          .catch(error => {
+            console.log('Service Worker注册失败:', error);
+          });
+      });
+
+      // 监听SW激活
+      let refreshing;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+    }
+
+    // iOS Safari添加到主屏幕提示
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+
+      // 显示安装提示（可选）
+      const installHint = document.createElement('div');
+      installHint.className = 'install-hint';
+      installHint.innerHTML = `
+        <span>💕</span>
+        <p>把游戏添加到主屏幕，随时和GZJ一起玩！</p>
+        <button id="install-btn">添加到主屏幕</button>
+        <button id="dismiss-install">稍后</button>
+      `;
+      installHint.style.cssText = `
+        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+        background: linear-gradient(135deg, #FFB3D9, #FFC9E5);
+        padding: 15px 20px; border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(255,105,180,0.3);
+        display: flex; align-items: center; gap: 12px;
+        max-width: 90%; z-index: 10000;
+        animation: slideUp 0.3s ease-out;
+      `;
+
+      document.body.appendChild(installHint);
+
+      document.getElementById('install-btn')?.addEventListener('click', async () => {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installHint.remove();
+      });
+
+      document.getElementById('dismiss-install')?.addEventListener('click', () => {
+        installHint.remove();
+      });
+    });
+  </script>
+</body>
+
+</html>

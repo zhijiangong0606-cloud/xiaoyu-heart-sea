@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>生成游戏图标</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #ffeef8 0%, #ffe5f1 100%);
+    }
+    h1 {
+      color: #ff69b4;
+      text-align: center;
+    }
+    .canvas-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+    .canvas-box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    canvas {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      display: block;
+      margin: 10px auto;
+    }
+    button {
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+    button:hover {
+      background: #ff1493;
+    }
+    .info {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .success {
+      color: #10b981;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 游戏图标生成器</h1>
+
+  <div class="info">
+    <h3>说明</h3>
+    <p>为了在手机上"添加到主屏幕"，需要生成以下图标：</p>
+    <ul>
+      <li><strong>icon-192.png</strong> - 192x192px（必需）</li>
+      <li><strong>icon-512.png</strong> - 512x512px（必需）</li>
+    </ul>
+    <p>点击下面的"生成"按钮，然后右键保存每个图标。</p>
+  </div>
+
+  <div class="canvas-container">
+    <div class="canvas-box">
+      <h3>192x192</h3>
+      <canvas id="canvas192" width="192" height="192"></canvas>
+      <button onclick="download('canvas192', 'icon-192.png')">下载 icon-192.png</button>
+    </div>
+
+    <div class="canvas-box">
+      <h3>512x512</h3>
+      <canvas id="canvas512" width="512" height="512"></canvas>
+      <button onclick="download('canvas512', 'icon-512.png')">下载 icon-512.png</button>
+    </div>
+  </div>
+
+  <div class="info">
+    <h3>下一步</h3>
+    <ol>
+      <li>点击上方按钮下载两个图标</li>
+      <li>将它们放到 <code>dist/</code> 目录</li>
+      <li>然后就可以部署到 GitHub Pages 了！</li>
+    </ol>
+  </div>
+
+  <script>
+    // 绘制可爱的小鱼图标
+    function drawIcon(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const scale = size / 192; // 以192为基准缩放
+
+      // 粉色渐变背景
+      const gradient = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+      gradient.addColorStop(0, '#FFE5F1');
+      gradient.addColorStop(1, '#FFB3D9');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, size, size);
+
+      // 绘制可爱的小鱼
+      ctx.save();
+      ctx.translate(size/2, size/2);
+      ctx.scale(scale, scale);
+
+      // 鱼身体（粉色）
+      ctx.fillStyle = '#FF69B4';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 50, 35, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 鱼尾巴
+      ctx.fillStyle = '#FF1493';
+      ctx.beginPath();
+      ctx.moveTo(-50, 0);
+      ctx.lineTo(-80, -25);
+      ctx.lineTo(-75, 0);
+      ctx.lineTo(-80, 25);
+      ctx.closePath();
+      ctx.fill();
+
+      // 眼睛底色（白色）
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(20, -5, 12, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 眼珠（黑色）
+      ctx.fillStyle = '#2D3748';
+      ctx.beginPath();
+      ctx.arc(23, -5, 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 眼睛高光
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(25, -7, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 可爱的腮红
+      ctx.fillStyle = 'rgba(255, 182, 193, 0.6)';
+      ctx.beginPath();
+      ctx.ellipse(15, 10, 10, 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 嘴巴（微笑）
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(20, 5, 8, 0.2, Math.PI - 0.2);
+      ctx.stroke();
+
+      // 蝴蝶结（在头顶）
+      ctx.fillStyle = '#FF1493';
+      // 左边
+      ctx.beginPath();
+      ctx.moveTo(-5, -35);
+      ctx.lineTo(-20, -40);
+      ctx.lineTo(-15, -30);
+      ctx.closePath();
+      ctx.fill();
+      // 右边
+      ctx.beginPath();
+      ctx.moveTo(5, -35);
+      ctx.lineTo(20, -40);
+      ctx.lineTo(15, -30);
+      ctx.closePath();
+      ctx.fill();
+      // 中间
+      ctx.beginPath();
+      ctx.arc(0, -35, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 星星点缀
+      ctx.fillStyle = '#FFF4A3';
+      drawStar(ctx, -60, -50, 5, 8);
+      drawStar(ctx, 70, -40, 5, 6);
+      drawStar(ctx, 60, 50, 5, 7);
+
+      ctx.restore();
+    }
+
+    // 绘制星星
+    function drawStar(ctx, x, y, points, radius) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.beginPath();
+      for (let i = 0; i < points * 2; i++) {
+        const r = i % 2 === 0 ? radius : radius / 2;
+        const angle = (Math.PI * i) / points;
+        const px = r * Math.cos(angle - Math.PI / 2);
+        const py = r * Math.sin(angle - Math.PI / 2);
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // 生成所有图标
+    drawIcon(document.getElementById('canvas192'));
+    drawIcon(document.getElementById('canvas512'));
+
+    // 下载函数
+    function download(canvasId, filename) {
+      const canvas = document.getElementById(canvasId);
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>
